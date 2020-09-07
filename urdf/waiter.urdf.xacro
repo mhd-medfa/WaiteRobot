@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<robot name="waiterobot" xmlns:xacro="http://ros.org/wiki/xacro">
+    <xacro:property name="width" value="0.2" />
+    <xacro:property name="baselen" value="0.2" />
+    <xacro:property name="bodylen" value="0.6" />
+    <xacro:property name="legslen" value="1.0" />
+    <xacro:property name="pi" value="3.14159265" />
+
+    <material name="red">
+        <color rgba="1 0 0 1"/>
+    </material>
+
+    <material name="black">
+        <color rgba="0 0 0 1"/>
+    </material>
+
+    <material name="white">
+        <color rgba="1 1 1 1"/>
+    </material>
+
+    <xacro:macro name="default_inertial" params="mass">
+        <inertial>
+        <mass value="${mass}" />
+        <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0" />
+        </inertial>
+    </xacro:macro>
+    
+    <link name="base_link">
+      <visual>
+        <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+        <geometry>
+          <!-- <cylinder length="${baselen}" radius="${width}"/> -->
+          <box size="0.5 0.5 ${baselen}"/>
+        </geometry>
+        <material name="white"/>
+      </visual>
+    </link>
+
+    <joint name="base_to_legs" type="revolute">
+      <axis xyz="0 0 1"/>
+      <limit lower="0.0" upper="${pi/4.0}" effort="50.0" velocity="0.5"/>
+      <parent link="base_link"/>
+      <child link="legs_link"/>
+    </joint>
+
+    <!-- <transmission name="trans_base_to_legs">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="base_to_legs">
+        <hardwareInterface>EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="motor_base_to_legs">
+        <mechanicalReduction>0.5</mechanicalReduction>
+        <hardwareInterface>EffortJointInterface</hardwareInterface>
+      </actuator>
+    </transmission> -->
+
+    <link name="legs_link">
+      <visual>
+        <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 ${baselen+0.2}"/>
+        <geometry>
+          <cylinder radius="${width}" length="${legslen}"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="${width}" length="${legslen}"/>
+        </geometry>
+      </collision>
+      <xacro:default_inertial mass="10"/>
+    </link>
+
+    <joint name="legs_to_body" type="revolute">
+      <axis xyz="1 0 0"/>
+      <limit lower="0.0" upper="${pi/4.0}" effort="50.0" velocity="0.5"/>
+      <parent link="legs_link"/>
+      <child link="body_link"/>
+    </joint>
+
+    <!-- <transmission name="trans_legs_to_body">
+      <type>transmission_interface/SimpleTransmission</type>
+      <joint name="legs_to_body">
+        <hardwareInterface>EffortJointInterface</hardwareInterface>
+      </joint>
+      <actuator name="motor_legs_to_body">
+        <mechanicalReduction>0.5</mechanicalReduction>
+        <hardwareInterface>EffortJointInterface</hardwareInterface>
+      </actuator>
+    </transmission> -->
+
+    <link name="body_link">
+      <visual>
+        <origin xyz="0.0 0.0 ${legslen+0.1}" rpy="0.0 0.0 0.0"/>
+        <geometry>
+          <!-- <cylinder radius="${width}" length="${bodylen}"/> -->
+          <box size="${width} ${width} ${bodylen}"/>
+        </geometry>
+        <material name="red"/>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="${width}" length="${bodylen}"/>
+        </geometry>
+      </collision>
+      <xacro:default_inertial mass="10"/>
+    </link>
+    
+    <!-- <gazebo>
+      <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      </plugin>
+    </gazebo> -->
+</robot>

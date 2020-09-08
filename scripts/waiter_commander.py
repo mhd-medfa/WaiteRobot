@@ -7,14 +7,14 @@ def commander():
     pub = rospy.Publisher('waiter/joint_states', JointState, 
                             queue_size=10)
     rospy.init_node('commander', anonymous=True)
-    rate = rospy.Rate(10) # 10hz
+    rate = rospy.Rate(1) # 1hz
     joint_state = JointState()
     joint_state.header = Header()
     joint_state.name = ['base_to_legs', 'legs_to_body']
 
     while not rospy.is_shutdown():
         joint_state.header.stamp = rospy.Time.now()
-        joint_state.position = [0.4, 0.1]
+        joint_state.position = [0.25, 0.2]
 
         pub.publish(joint_state)
         rate.sleep()

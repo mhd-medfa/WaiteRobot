@@ -14,7 +14,7 @@ def commander():
 
     while not rospy.is_shutdown():
         joint_state.header.stamp = rospy.Time.now()
-        joint_state.position = [0.4, 0.5]
+        joint_state.position = [0.4, 0.1]
 
         pub.publish(joint_state)
         rate.sleep()
